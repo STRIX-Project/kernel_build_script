@@ -142,7 +142,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	fi
 
 	echo "★★Toolchains Done, Now Its time for AnyKernel .."
-	git clone --depth 1 --no-single-branch https://github.com/azrim/kerneltemplate.git -b dtb $AK3
+	git clone https://github.com/azrim/kerneltemplate.git -b dtb "$AK3"
 	echo "★★Cloning libufdt"
 	git clone https://android.googlesource.com/platform/system/libufdt "$KERNEL_DIR"/scripts/ufdt/libufdt
 	echo "★★Cloning Kinda Done..!!!"
@@ -208,7 +208,6 @@ build_kernel() {
  	then
 		tg_post_msg "<b>$KBUILD_BUILD_VERSION CI Build Triggered</b>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>%0A<b>Status : </b>#Nightly" "$CHATID"
 	fi
-
 	make O=out $DEFCONFIG
 	if [ $DEF_REG = 1 ]
 	then
@@ -246,7 +245,6 @@ build_kernel() {
 		NM=llvm-nm \
 		OBJCOPY=llvm-objcopy \
 		LD=ld.lld "${MAKE[@]}" 2>&1 | tee error.log
-                ls $KERNEL_DIR"/out/arch/arm64/boot/
 
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
@@ -272,16 +270,19 @@ build_kernel() {
 ##--------------------------------------------------------------##
 
 gen_zip() {
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb $AK3/Image.gz-dtb
+        mkdir "$AK3"/kernel/
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz "$AK3"/kernel/Image.gz
+	mkdir $ANYKERNEL_DIR/dtbs/
+        mv "$KERNEL_DIR"/out/arch/arm64/boot/dts/qcom/trinket.dtb "$AK3"/dtbs/
 	if [ $BUILD_DTBO = 1 ]
 	then
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img $AK3/dtbo.img
 	fi
-	cd AnyKernel2 || exit
-	zip -r9 $ZIPNAME-$DEVICE-"$DATE".zip * -x .git README.md
+	cd "$AK3"
+	zip -r9 $ZIPNAME-$DEVICE-"$DATE".zip *
 
 	## Prepare a final zip variable
-	ZIP_FINAL="$ZIPNAME-$DEVICE-$DATE.zip"
+	ZIP_FINAL="$AK3/$ZIPNAME-$DEVICE-$DATE.zip"
 
 	if [ $SIGN = 1 ]
 	then
