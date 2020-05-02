@@ -30,18 +30,18 @@ KERNEL_DIR=$PWD
 ZIPNAME="azure"
 
 # The name of the device for which the kernel is built
-MODEL="Redmi Note 7 Pro"
+MODEL="Redmi Note 8"
 
 # The codename of the device
-DEVICE="violet"
+DEVICE="ginkgo"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=vendor/violet-perf_defconfig
+DEFCONFIG=vendor/ginkgo-perf_defconfig
 
 # Specify compiler. 
 # 'clang' or 'gcc'
-COMPILER=gcc
+COMPILER=clang
 	if [ $COMPILER = "gcc" ]
 	then
 		# install few necessary packages
@@ -56,7 +56,7 @@ PTTG=1
 	if [ $PTTG = 1 ]
 	then
 		# Set Telegram Chat ID
-		CHATID="-1001245830369"
+		CHATID="-1001156668998"
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
@@ -64,7 +64,7 @@ DEF_REG=0
 
 # Build dtbo.img (select this only if your source has support to building dtbo.img)
 # 1 is YES | 0 is NO(default)
-BUILD_DTBO=1
+BUILD_DTBO=0
 
 # Sign the zipfile
 # 1 is YES | 0 is NO
@@ -139,7 +139,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	fi
 
 	echo "★★Toolchains Done, Now Its time for AnyKernel .."
-	git clone --depth 1 --no-single-branch https://github.com/Panchajanya1999/AnyKernel2.git -b $DEVICE
+	git clone --depth 1 --no-single-branch https://github.com/azrim/kerneltemplate.git -b dtb AnyKernel2
 	echo "★★Cloning libufdt"
 	git clone https://android.googlesource.com/platform/system/libufdt "$KERNEL_DIR"/scripts/ufdt/libufdt
 	echo "★★Cloning Kinda Done..!!!"
@@ -148,7 +148,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 ##------------------------------------------------------##
 
 exports() {
-	export KBUILD_BUILD_USER="panchajanya"
+	export KBUILD_BUILD_USER="azrim"
 	export ARCH=arm64
 	export SUBARCH=arm64
 
