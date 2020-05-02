@@ -189,7 +189,7 @@ tg_post_build() {
 	MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
 
 	#Show the Checksum alongwith caption
-	curl --progress-bar -F document=@"$AK3/$ZIP_FINAL" "$BOT_BUILD_URL" \
+	curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
 	-F chat_id="$2"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
@@ -246,7 +246,7 @@ build_kernel() {
 		NM=llvm-nm \
 		OBJCOPY=llvm-objcopy \
 		LD=ld.lld "${MAKE[@]}" 2>&1 | tee error.log
-
+        ls $KERNEL_DIR"/out/arch/arm64/boot/
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
