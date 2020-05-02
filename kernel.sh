@@ -246,7 +246,8 @@ build_kernel() {
 		NM=llvm-nm \
 		OBJCOPY=llvm-objcopy \
 		LD=ld.lld "${MAKE[@]}" 2>&1 | tee error.log
-        ls $KERNEL_DIR"/out/arch/arm64/boot/
+                ls $KERNEL_DIR"/out/arch/arm64/boot/
+
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
