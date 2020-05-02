@@ -35,6 +35,9 @@ MODEL="Redmi Note 8"
 # The codename of the device
 DEVICE="ginkgo"
 
+# Anykernel
+AK3=$KERNEL_DIR/AnyKernel2
+
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
 DEFCONFIG=vendor/ginkgo-perf_defconfig
@@ -68,7 +71,7 @@ BUILD_DTBO=0
 
 # Sign the zipfile
 # 1 is YES | 0 is NO
-SIGN=0
+SIGN=1
 	if [ $SIGN = 1 ]
 	then
 			#Check java installed or not
@@ -126,8 +129,8 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	echo " "
 	if [ $COMPILER = "clang" ]
 	then
-		echo "★★Cloning Azure Clang 11"
-		git clone --depth=1 https://github.com/Panchajanya1999/azure-clang.git clang-llvm
+		echo "★★Cloning Proton Clang 11"
+		git clone --depth=1 https://github.com/kdrag0n/proton-clang clang-llvm
 		# Toolchain Directory defaults to clang-llvm
 		TC_DIR=$KERNEL_DIR/clang-llvm
 	elif [ $COMPILER = "gcc" ]
@@ -139,7 +142,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	fi
 
 	echo "★★Toolchains Done, Now Its time for AnyKernel .."
-	git clone --depth 1 --no-single-branch https://github.com/azrim/kerneltemplate.git -b dtb AnyKernel2
+	git clone --depth 1 --no-single-branch https://github.com/azrim/kerneltemplate.git -b dtb $AK3
 	echo "★★Cloning libufdt"
 	git clone https://android.googlesource.com/platform/system/libufdt "$KERNEL_DIR"/scripts/ufdt/libufdt
 	echo "★★Cloning Kinda Done..!!!"
@@ -186,7 +189,7 @@ tg_post_build() {
 	MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
 
 	#Show the Checksum alongwith caption
-	curl --progress-bar -F document=@"AnyKernel2/$ZIP_FINAL" "$BOT_BUILD_URL" \
+	curl --progress-bar -F document=@"$AK3/$ZIP_FINAL" "$BOT_BUILD_URL" \
 	-F chat_id="$2"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
@@ -268,13 +271,13 @@ build_kernel() {
 ##--------------------------------------------------------------##
 
 gen_zip() {
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel2/Image.gz-dtb
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb $AK3/Image.gz-dtb
 	if [ $BUILD_DTBO = 1 ]
 	then
-		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel2/dtbo.img
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img $AK3/dtbo.img
 	fi
 	cd AnyKernel2 || exit
-	zip -r9 $ZIPNAME-$DEVICE-"$DATE" * -x .git README.md
+	zip -r9 $ZIPNAME-$DEVICE-"$DATE".zip * -x .git README.md
 
 	## Prepare a final zip variable
 	ZIP_FINAL="$ZIPNAME-$DEVICE-$DATE.zip"
