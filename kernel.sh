@@ -24,7 +24,7 @@
 ##----------Basic Informations, COMPULSORY--------------##
 
 # The defult directory where the kernel should be placed
-KERNEL_DIR=$PWD
+KERNEL_DIR=/root/project/ginkgo
 
 # The name of the Kernel, to name the ZIP
 ZIPNAME="SiLonT"
@@ -185,15 +185,12 @@ tg_post_msg() {
 ##----------------------------------------------------------------##
 
 tg_post_build() {
-	#Post MD5Checksum alongwith for easeness
-	MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
-
 	#Show the Checksum alongwith caption
-	curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
+	curl -F document=@"$1" "$BOT_BUILD_URL" \
 	-F chat_id="$2"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
-	-F caption="$3 | <b>MD5 Checksum : </b><code>$MD5CHECK</code>"  
+	-F caption="$3"  
 }
 
 ##----------------------------------------------------------##
@@ -258,11 +255,6 @@ build_kernel() {
 					create "$KERNEL_DIR/out/arch/arm64/boot/dtbo.img" --page_size=4096 "$KERNEL_DIR/out/arch/arm64/boot/dts/qcom/sm6150-idp-overlay.dtbo"
 			fi
 				gen_zip
-		else
-			if [ "$PTTG" = 1 ]
- 			then
-				tg_post_build "error.log" "$CHATID" "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>"
-			fi
 		fi
 	
 }
@@ -271,9 +263,9 @@ build_kernel() {
 
 gen_zip() {
         mkdir "$AK3"/kernel/
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz "$AK3"/kernel/Image.gz
+	mv /root/project/ginkgo/out/arch/arm64/boot/Image.gz "$AK3"/kernel/Image.gz
 	mkdir $ANYKERNEL_DIR/dtbs/
-        mv "$KERNEL_DIR"/out/arch/arm64/boot/dts/qcom/trinket.dtb "$AK3"/dtbs/
+        mv /root/project/ginkgo/out/arch/arm64/boot/dts/qcom/trinket.dtb "$AK3"/dtbs/
 	if [ $BUILD_DTBO = 1 ]
 	then
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img $AK3/dtbo.img
