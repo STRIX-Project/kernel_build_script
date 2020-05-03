@@ -249,7 +249,7 @@ build_kernel() {
 
         mkdir "$AK3"/kernel/
 	mv /root/project/ginkgo/out/arch/arm64/boot/Image.gz "$AK3"/kernel/Image.gz
-	mkdir $ANYKERNEL_DIR/dtbs/
+	mkdir $AK3/dtbs/
         mv /root/project/ginkgo/out/arch/arm64/boot/dts/qcom/trinket.dtb "$AK3"/dtbs/
 	if [ $BUILD_DTBO = 1 ]
 	then
