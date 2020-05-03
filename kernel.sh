@@ -256,7 +256,7 @@ build_kernel() {
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img $AK3/dtbo.img
 	fi
 	cd "$AK3"
-	zip -r9 $ZIPNAME-$DEVICE-"$DATE".zip *
+	zip -r9 $ZIPNAME-$DEVICE-"$DATE" * -x .git
 
 	## Prepare a final zip variable
 	ZIP_FINAL="$AK3/$ZIPNAME-$DEVICE-$DATE.zip"
