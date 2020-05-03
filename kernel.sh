@@ -60,6 +60,7 @@ PTTG=1
 	then
 		# Set Telegram Chat ID
 		CHATID="-1001156668998"
+		GRPID="-1001468720637"
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
@@ -182,6 +183,7 @@ tg_post_msg() {
 
 }
 
+
 ##----------------------------------------------------------------##
 
 tg_post_build() {
@@ -204,7 +206,8 @@ build_kernel() {
 	if [ "$PTTG" = 1 ]
  	then
 		tg_post_msg "<b>$KBUILD_BUILD_VERSION CI Build Triggered</b>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>%0A<b>Status : </b>#Nightly" "$CHATID"
-	fi
+		tg_post_msg "<b>$KBUILD_BUILD_VERSION CI Build Triggered</b>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>%0A<b>Status : </b>#Nightly" "$GRPID"
+        fi
 	make O=out $DEFCONFIG
 	if [ $DEF_REG = 1 ]
 	then
@@ -267,7 +270,8 @@ build_kernel() {
 		if [ "$PTTG" = 1 ]
  		then
  			tg_post_msg "<code>Signing Zip file with AOSP keys..</code>" "$CHATID"
- 		fi
+  			tg_post_msg "<code>Signing Zip file with AOSP keys..</code>" "$GRPID"
+                fi
 		curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel2/master/zipsigner-3.0.jar
 		java -jar zipsigner-3.0.jar $ZIPNAME-$DEVICE-"$DATE".zip "$ZIP_FINAL"-signed.zip
 		ZIP_FINAL="$ZIP_FINAL-signed.zip"
@@ -276,6 +280,7 @@ build_kernel() {
 	if [ "$PTTG" = 1 ]
  	then
 		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+		tg_post_build "$ZIP_FINAL" "$GRPID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
 	fi
 	cd ..
 }
