@@ -249,8 +249,14 @@ build_kernel() {
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
-
-        mkdir "$AK3"/kernel/
+        if ! [ -f /root/project/ginkgo/out/arch/arm64/boot/Image.gz ]; then
+	        echo -e "Kernel compilation failed, See buildlog to fix errors"
+	        tg_post_build "error.log" "$CHATID" "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>"
+                tg_post_build "error.log" "$GRPID" "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>"
+	        exit 1
+	fi
+	
+	mkdir "$AK3"/kernel/
 	mv /root/project/ginkgo/out/arch/arm64/boot/Image.gz "$AK3"/kernel/Image.gz
 	mkdir $AK3/dtbs/
         mv /root/project/ginkgo/out/arch/arm64/boot/dts/qcom/trinket.dtb "$AK3"/dtbs/
