@@ -282,7 +282,7 @@ This is an auto-generated commit"
 		curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel2/master/zipsigner-3.0.jar
 		java -jar zipsigner-3.0.jar $ZIP_FINAL "$ZIP_FINAL"-signed.zip
 		ZIP_SEND="$ZIP_FINAL-signed.zip"
-	else
+	elif [ $SIGN = 0 ]
 	then
 	        mv $ZIP_FINAL $ZIP_SEND
 	fi
