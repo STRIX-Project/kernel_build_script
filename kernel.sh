@@ -279,13 +279,10 @@ This is an auto-generated commit"
  			tg_post_msg "<code>Signing Zip file with AOSP keys..</code>" "$CHATID"
   			tg_post_msg "<code>Signing Zip file with AOSP keys..</code>" "$GRPID"
                 fi
-		curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel2/master/zipsigner-3.0.jar
-		java -jar zipsigner-3.0.jar $ZIP_FINAL "$ZIP_FINAL"-signed.zip
 		ZIP_SEND="$ZIP_FINAL-signed.zip"
-	elif [ $SIGN = 0 ]
-	then
-	        mv $ZIP_FINAL $ZIP_SEND
-	fi
+		curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel2/master/zipsigner-3.0.jar
+		java -jar zipsigner-3.0.jar $ZIP_FINAL "$ZIP_SEND"
+        fi
 
 	if [ "$PTTG" = 1 ]
  	then
