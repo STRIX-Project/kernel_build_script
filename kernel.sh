@@ -24,7 +24,7 @@
 ##----------Basic Informations, COMPULSORY--------------##
 
 # The defult directory where the kernel should be placed
-KERNEL_DIR=/root/project/ginkgo
+KERNEL_DIR=$PWD
 
 # The name of the Kernel, to name the ZIP
 ZIPNAME="SiLonT"
@@ -123,6 +123,7 @@ COMMIT_HEAD=$(git log --oneline -1)
 
 # Set Date 
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
+BUILD_DATE=$(date +"%Y-%m-%d"-%H%M)
 
 #Now Its time for other stuffs like cloning, exporting, etc
 
@@ -130,8 +131,8 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	echo " "
 	if [ $COMPILER = "clang" ]
 	then
-		echo "★★Cloning Proton Clang 11"
-		git clone --depth=1 https://github.com/kdrag0n/proton-clang clang-llvm
+		echo "★★Cloning Azure Clang 11"
+		git clone --depth=1 https://github.com/Panchajanya1999/azure-clang -b 11.x clang-llvm
 		# Toolchain Directory defaults to clang-llvm
 		TC_DIR=$KERNEL_DIR/clang-llvm
 	elif [ $COMPILER = "gcc" ]
@@ -214,8 +215,7 @@ build_kernel() {
 		cp .config arch/arm64/configs/$DEFCONFIG
 		git add arch/arm64/configs/$DEFCONFIG
 		git commit -m "$DEFCONFIG: Regenerate
-
-						This is an auto-generated commit"
+This is an auto-generated commit"
 	fi
 
 	BUILD_START=$(date +"%s")
@@ -249,7 +249,7 @@ build_kernel() {
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
-        if ! [ -f /root/project/ginkgo/out/arch/arm64/boot/Image.gz ]; then
+        if ! [ -f $KERNEL_DIR/out/arch/arm64/boot/Image.gz ]; then
 	        echo -e "Kernel compilation failed, See buildlog to fix errors"
 	        tg_post_build "error.log" "$CHATID" "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>"
                 tg_post_build "error.log" "$GRPID" "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>"
@@ -265,10 +265,11 @@ build_kernel() {
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img $AK3/dtbo.img
 	fi
 	cd "$AK3"
-	zip -r9 $ZIPNAME-$DEVICE-"$DATE" * -x .git
+	zip -r9 $ZIPNAME-$DEVICE-"$BUILD_DATE" * -x .git
 
 	## Prepare a final zip variable
-	ZIP_FINAL="$AK3/$ZIPNAME-$DEVICE-$DATE.zip"
+	ZIP_FINAL="$AK3/$ZIPNAME-$DEVICE-$BUILD_DATE"
+	ZIP_SEND="$AK3/$ZIPNAME-$DEVICE-$BUILD_DATE".zip
 
 	if [ $SIGN = 1 ]
 	then
@@ -279,14 +280,17 @@ build_kernel() {
   			tg_post_msg "<code>Signing Zip file with AOSP keys..</code>" "$GRPID"
                 fi
 		curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel2/master/zipsigner-3.0.jar
-		java -jar zipsigner-3.0.jar $ZIPNAME-$DEVICE-"$DATE".zip "$ZIP_FINAL"-signed.zip
-		ZIP_FINAL="$ZIP_FINAL-signed.zip"
+		java -jar zipsigner-3.0.jar $ZIP_FINAL "$ZIP_FINAL"-signed.zip
+		ZIP_SEND="$ZIP_FINAL-signed.zip"
+	else
+	then
+	        mv $ZIP_FINAL $ZIP_SEND
 	fi
 
 	if [ "$PTTG" = 1 ]
  	then
-		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
-		tg_post_build "$ZIP_FINAL" "$GRPID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+		tg_post_build "$ZIP_SEND" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+		tg_post_build "$ZIP_SEND" "$GRPID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
 	fi
 	cd ..
 }
