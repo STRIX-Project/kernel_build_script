@@ -132,7 +132,7 @@ BUILD_DATE=$(date +"%Y-%m-%d"-%H%M)
 	if [ $COMPILER = "clang" ]
 	then
 		echo "★★Cloning Azure Clang 11"
-		git clone --depth=1 https://github.com/Panchajanya1999/azure-clang -b 11.x clang-llvm
+		git clone --depth=1 https://github.com/kdrag0n/proton-clang clang-llvm
 		# Toolchain Directory defaults to clang-llvm
 		TC_DIR=$KERNEL_DIR/clang-llvm
 	elif [ $COMPILER = "gcc" ]
