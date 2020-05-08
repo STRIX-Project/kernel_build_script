@@ -222,30 +222,17 @@ This is an auto-generated commit"
 	
 	if [ $COMPILER = "clang" ]
 	then
-		MAKE+=(
-			CROSS_COMPILE=aarch64-linux-gnu- \
-			CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-			CC=clang \
-			AR=llvm-ar \
-			OBJDUMP=llvm-objdump \
-			STRIP=llvm-strip
-		)
-	elif [ $COMPILER = "gcc" ]
-	then
-		MAKE+=(
-			CROSS_COMPILE_ARM32=arm-eabi- \
-			CROSS_COMPILE=aarch64-elf- \
-			AR=aarch64-elf-ar \
-			OBJDUMP=aarch64-elf-objdump \
-			STRIP=aarch64-elf-strip
-		)
-	fi
-
-	make -j"$PROCS" O=out \
+	    make -j"$PROCS" O=out \
 		NM=llvm-nm \
 		OBJCOPY=llvm-objcopy \
-		LD=ld.lld "${MAKE[@]}" 2>&1 | tee error.log
-
+		LD=ld.lld \
+		CROSS_COMPILE=aarch64-linux-gnu- \
+		CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+		CC=clang \
+		AR=llvm-ar \
+		OBJDUMP=llvm-objdump \
+		STRIP=llvm-strip | tee error.log
+        fi
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
