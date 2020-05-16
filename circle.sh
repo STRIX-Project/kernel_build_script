@@ -148,9 +148,11 @@ fixcilto() {
 setversioning
 fixcilto
 tg_groupcast "${KERNEL} compilation clocked at $(date +%Y%m%d-%H%M)!"
-tg_channelcast "Compiler: <code>${COMPILER_STRING}</code>" \
-	"Device: <b>${DEVICE}</b>" \
-	"Kernel: <code>${KERNEL}, release ${KERNELRELEASE}</code>" \
+tg_channelcast "<b>$CIRCLE_BUILD_NUM CI Build Triggered</b>" \
+        "Compiler: <code>${COMPILER_STRING}</code>" \
+	"Device: ${DEVICE}" \
+	"Kernel: <code>${KERNEL}, ${KERNELRELEASE}</code>" \
+	"Linux Version: <code>$(make kernelversion)</code>" \
 	"Branch: <code>${PARSE_BRANCH}</code>" \
 	"Commit point: <code>${COMMIT_POINT}</code>" \
 	"Clocked at: <code>$(date +%Y%m%d-%H%M)</code>"
@@ -159,5 +161,5 @@ makekernel || exit 1
 shipkernel
 END=$(date +"%s")
 DIFF=$(( END - START ))
-tg_channelcast "Build for ${DEVICE} with ${COMPILER_STRING} took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
-tg_groupcast "Build for ${DEVICE} with ${COMPILER_STRING} took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @azrimkang"
+tg_channelcast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
+tg_groupcast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @azrimkang"
