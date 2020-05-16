@@ -13,9 +13,10 @@
 KERNELDIR="$(pwd)"
 SCRIPTS=${KERNELDIR}/kernelscripts
 OUTDIR=${KERNELDIR}/out
+COMPILER_TYPES=clang
 
 # Pick your poison
-if [[ "$*" =~ "clang"* ]]; then
+if [[ "${COMPILER_TYPES}" =~ "clang" ]]; then
         git clone https://github.com/kdrag0n/proton-clang --depth=1 "${KERNELDIR}"/clang
         COMPILER_STRING='Proton Clang (latest)'
 	COMPILER_TYPE='clang'
