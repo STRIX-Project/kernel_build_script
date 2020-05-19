@@ -19,6 +19,13 @@ PARSE_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 PARSE_ORIGIN="$(git config --get remote.origin.url)"
 COMMIT_POINT="$(git log --pretty=format:'%h : %s' -1)"
 
+# output file
+if [[ "${PARSE_BRANCH}" =~ "pie"* ]]; then
+    OUTFILE=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
+else
+    OUTFILE=${OUTDIR}/arch/arm64/boot/Image.gz
+fi
+
 # Kernel groups
 CI_CHANNEL=-1001156668998
 TG_GROUP=-1001468720637
@@ -82,9 +89,9 @@ makekernel() {
     # Clean any old AnyKernel
     rm -rf ${ANYKERNEL}
     if [[ "${PARSE_BRANCH}" =~ "pie"* ]]; then
-        git clone https://github.com/azrim/kerneltemplate -b pie anykernel3
+        git clone https://github.com/azrim/kerneltemplate -b pie ${ANYKERNEL}
     else
-        git clone https://github.com/azrim/kerneltemplate -b dtb anykernel3
+        git clone https://github.com/azrim/kerneltemplate -b dtb ${ANYKERNEL}
     fi
     kernelstringfix
     make O=out ARCH=arm64 ${DEFCONFIG}
@@ -95,7 +102,7 @@ makekernel() {
     fi
 
     # Check if compilation is done successfully.
-    if ! [ -f "${OUTDIR}"/arch/arm64/boot/Image.gz-dtb ]; then
+    if ! [ -f "${OUTFILE}" ]; then
 	    END=$(date +"%s")
 	    DIFF=$(( END - START ))
 	    echo -e "Kernel compilation failed, See buildlog to fix errors"
