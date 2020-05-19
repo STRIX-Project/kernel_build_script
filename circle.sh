@@ -32,19 +32,14 @@ KERNELRELEASE=ginkgo
 # Function to replace defconfig versioning
 setversioning() {
     if [[ "${PARSE_BRANCH}" =~ "pie"* ]]; then
-    	# For staging branch
+    	# For Pie branch
 	    KERNELTYPE=PIE
 	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-${KERNELTYPE}-$(date +%y%m%d-%H%M)"
 	    sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
-    elif [[ "${PARSE_BRANCH}" =~ "havoc"* ]]; then
-	    # For stable (ten) branch
+    else
+	    # For Q branch
 	    KERNELTYPE=A10
 	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-$KERNELTYPE-$(date +%y%m%d-%H%M)"
-        sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
-    else
-	    # Dunno when this will happen but we will cover, just in case
-	    KERNELTYPE=${PARSE_BRANCH}
-	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-${PARSE_BRANCH}-$(date +%y%m%d-%H%M)"
         sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
     fi
 
