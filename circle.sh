@@ -28,7 +28,7 @@ fi
 
 # Kernel groups
 CI_CHANNEL=-1001156668998
-TG_GROUP=-1001468720637
+TG_GROUP=-1001254060097
 
 # Clang is annoying
 PATH="${KERNELDIR}/clang/bin:${PATH}"
