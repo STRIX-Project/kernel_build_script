@@ -126,7 +126,7 @@ shipkernel() {
         mkdir "${ANYKERNEL}"/kernel
         mkdir "${ANYKERNEL}"/dtbs
         cp "${OUTDIR}"/arch/arm64/boot/Image.gz "${ANYKERNEL}"/kernel
-        cp "${OUTDIR}"arch/arm64/boot/dts/qcom/trinket.dtb "${ANYKERNEL}"/dtbs/
+        cp "${OUTDIR}"/arch/arm64/boot/dts/qcom/trinket.dtb "${ANYKERNEL}"/dtbs/
     fi
 
 
