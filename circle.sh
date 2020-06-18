@@ -42,17 +42,14 @@ setversioning() {
     	# For Pie branch
 	    KERNELTYPE=PIE
 	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-${KERNELTYPE}-$(date +%y%m%d-%H%M)"
-	    sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
     elif [[ "${PARSE_BRANCH}" =~ "Q-rebase"* ]]; then
 	    # For Q branch
 	    KERNELTYPE=A10
 	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-$KERNELTYPE-$(date +%y%m%d-%H%M)"
-            sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
     else
 	    # For test
 	    KERNELTYPE=Test
 	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-$KERNELTYPE-$(date +%y%m%d-%H%M)"
-            sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
     fi
 
     # Export our new localversion and zipnames
