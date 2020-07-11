@@ -7,65 +7,51 @@
 # CI build script
 
 # Needed exports
-export TELEGRAM_TOKEN=${BOT_API_TOKEN}
+export TELEGRAM_TOKEN=1206672611:AAGYbqxf4SN8f_Zsg3pa6nxOltilb3e8IN0
 export ANYKERNEL=$(pwd)/anykernel3
 
 # Avoid hardcoding things
-KERNEL=SiLonT
-DEFCONFIG=vendor/ginkgo-perf_defconfig
-DEVICE=ginkgo
+KERNEL=STRIX
+DEFCONFIG=tulip_defconfig
+DEVICE=tulip
 CIPROVIDER=CircleCI
 PARSE_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 PARSE_ORIGIN="$(git config --get remote.origin.url)"
 COMMIT_POINT="$(git log --pretty=format:'%h : %s' -1)"
 
-# output file
-if [[ "${PARSE_BRANCH}" =~ "pie"* ]]; then
-    OUTFILE=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
-else
-    OUTFILE=${OUTDIR}/arch/arm64/boot/Image.gz
-fi
+# Export custom KBUILD
+export KBUILD_BUILD_USER=builder
+export KBUILD_BUILD_HOST=fiqriardyansyah
 
-# Kernel groups
-CI_CHANNEL=-1001156668998
-TG_GROUP=-1001254060097
+# Export image file
+export KERN_IMG=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
+
+# Kernel channel
+CI_CHANNEL=-1001466536460
+TG_GROUP=-1001287488921
+
+# Set default local datetime
+DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
+BUILD_DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 
 # Clang is annoying
 PATH="${KERNELDIR}/clang/bin:${PATH}"
 
 # Kernel revision
-KERNELRELEASE=ginkgo
+KERNELTYPE=EAS
+KERNELRELEASE=tulip
 
 # Function to replace defconfig versioning
 setversioning() {
-    if [[ "${PARSE_BRANCH}" =~ "pie"* ]]; then
-    	# For Pie branch
-	    KERNELTYPE=PIE
-	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-${KERNELTYPE}-$(date +%y%m%d-%H%M)"
-    elif [[ "${PARSE_BRANCH}" =~ "Q-rebase"* ]]; then
-	    # For Q branch
-	    KERNELTYPE=A10
-	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-$KERNELTYPE-$(date +%y%m%d-%H%M)"
-    else
-	    # For test
-	    KERNELTYPE=Test
-	    KERNELNAME="${KERNEL}-${KERNELRELEASE}-$KERNELTYPE-$(date +%y%m%d-%H%M)"
-    fi
+
+    # For staging branch
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-nightly-${BUILD_DATE}"
+    sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
 
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export TEMPZIPNAME="${KERNELNAME}-unsigned.zip"
     export ZIPNAME="${KERNELNAME}.zip"
-}
-
-# Send to main group
-tg_groupcast() {
-    "${TELEGRAM}" -c "${TG_GROUP}" -H \
-    "$(
-		for POST in "${@}"; do
-			echo "${POST}"
-		done
-    )"
 }
 
 # Send to channel
@@ -78,10 +64,37 @@ tg_channelcast() {
     )"
 }
 
+# Send to main group
+tg_groupcast() {
+    "${TELEGRAM}" -c "${TG_GROUP}" -H \
+    "$(
+        for POST in "${@}"; do
+            echo "${POST}"
+        done
+    )"
+}
+
+paste() {
+    curl -F document=build.log "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" \
+            -F chat_id="$CI_CHANNEL" \
+            -F "disable_web_page_preview=true" \
+            -F "parse_mode=html" 
+}
+
+# Fin Error
+finerr() {
+        paste
+        curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+            -d chat_id="$CI_CHANNEL" \
+            -d "disable_web_page_preview=true" \
+            -d "parse_mode=markdown" \
+            -d text="Build throw an error(s)"
+}
+
 # Fix long kernel strings
 kernelstringfix() {
-    git config --global user.name "azrim"
-    git config --global user.email "mirzaspc@gmail.com"
+    git config --global user.name "Fiqri Ardyansyah"
+    git config --global user.email "fiqri15072019@gmail.com"
     git add .
     git commit -m "stop adding dirty"
 }
@@ -90,11 +103,7 @@ kernelstringfix() {
 makekernel() {
     # Clean any old AnyKernel
     rm -rf ${ANYKERNEL}
-    if [[ "${PARSE_BRANCH}" =~ "pie"* ]]; then
-        git clone https://github.com/azrim/kerneltemplate -b pie ${ANYKERNEL}
-    else
-        git clone https://github.com/azrim/kerneltemplate -b dtb ${ANYKERNEL}
-    fi
+    git clone https://github.com/fiqri19102002/AnyKernel3.git -b lineage-17.1-tulip anykernel3
     kernelstringfix
     make O=out ARCH=arm64 ${DEFCONFIG}
     if [[ "${COMPILER_TYPE}" =~ "clang"* ]]; then
@@ -104,12 +113,12 @@ makekernel() {
     fi
 
     # Check if compilation is done successfully.
-    if ! [ -f "${OUTFILE}" ]; then
+    if ! [ -f "${OUTDIR}"/arch/arm64/boot/Image.gz-dtb ]; then
 	    END=$(date +"%s")
 	    DIFF=$(( END - START ))
 	    echo -e "Kernel compilation failed, See buildlog to fix errors"
 	    tg_channelcast "Build for ${DEVICE} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors!"
-	    tg_groupcast "Build for ${DEVICE} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors @azrim89! @azrimkang"
+        tg_groupcast "Build for ${DEVICE} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors @unknown_name123 !!!"
 	    exit 1
     fi
 }
@@ -117,15 +126,7 @@ makekernel() {
 # Ship the compiled kernel
 shipkernel() {
     # Copy compiled kernel
-    if [[ "${PARSE_BRANCH}" =~ "pie"* ]]; then
-        cp "${OUTDIR}"/arch/arm64/boot/Image.gz-dtb "${ANYKERNEL}"/
-    else
-        mkdir "${ANYKERNEL}"/kernel
-        mkdir "${ANYKERNEL}"/dtbs
-        cp "${OUTDIR}"/arch/arm64/boot/Image.gz "${ANYKERNEL}"/kernel
-        cp "${OUTDIR}"/arch/arm64/boot/dts/qcom/trinket.dtb "${ANYKERNEL}"/dtbs/
-    fi
-
+    cp "${KERN_IMG}" "${ANYKERNEL}"
 
     # Zip the kernel, or fail
     cd "${ANYKERNEL}" || exit
@@ -142,28 +143,20 @@ shipkernel() {
     cd ..
 }
 
-# Fix for CI builds running out of memory
-fixcilto() {
-    sed -i 's/CONFIG_LTO=y/# CONFIG_LTO is not set/g' arch/arm64/configs/${DEFCONFIG}
-    sed -i 's/CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y/# CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not set/g' arch/arm64/configs/${DEFCONFIG}
-}
-
 ## Start the kernel buildflow ##
 setversioning
-fixcilto
-tg_groupcast "${KERNEL} compilation clocked at $(date +%Y%m%d-%H%M)!"
-tg_channelcast "<b>$CIRCLE_BUILD_NUM CI Build Triggered</b>" \
-        "Compiler: <code>${COMPILER_STRING}</code>" \
-	"Device: ${DEVICE}" \
-	"Kernel: <code>${KERNEL}, ${KERNELRELEASE}</code>" \
-	"Linux Version: <code>$(make kernelversion)</code>" \
-	"Branch: <code>${PARSE_BRANCH}</code>" \
-	"Commit point: <code>${COMMIT_POINT}</code>" \
-	"Clocked at: <code>$(date +%Y%m%d-%H%M)</code>"
+tg_groupcast "compile started at $(date +%Y%m%d-%H%M)"
+tg_channelcast "Compiler: <code>${COMPILER_STRING}</code>" \
+               "Device: ${DEVICE}" \
+               "Kernel: <code>${KERNEL}, ${KERNELRELEASE}</code>" \
+               "Linux Version: <code>$(make kernelversion)</code>" \
+               "Branch: <code>${PARSE_BRANCH}</code>" \
+               "Latest commit: <code>${COMMIT_POINT}</code>" \
+               "Started at: <b>${BUILD_DATE}</b>"
 START=$(date +"%s")
 makekernel || exit 1
 shipkernel
 END=$(date +"%s")
 DIFF=$(( END - START ))
 tg_channelcast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
-tg_groupcast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @azrimkang"
+tg_groupcast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
