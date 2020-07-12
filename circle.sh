@@ -34,9 +34,6 @@ TG_GROUP=-1001287488921
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 BUILD_DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 
-# Clang is annoying
-PATH="${KERNELDIR}/clang/bin:${PATH}"
-
 # Kernel revision
 KERNELTYPE=EAS
 KERNELRELEASE=tulip
@@ -99,18 +96,18 @@ kernelstringfix() {
     git commit -m "stop adding dirty"
 }
 
+# Clone Anykernel3
+cloneak3() {
+    git clone https://github.com/fiqri19102002/AnyKernel3.git -b lineage-17.1-tulip anykernel3
+}
+
 # Make the kernel
 makekernel() {
-    # Clean any old AnyKernel
-    rm -rf ${ANYKERNEL}
-    git clone https://github.com/fiqri19102002/AnyKernel3.git -b lineage-17.1-tulip anykernel3
     kernelstringfix
+    export CROSS_COMPILE="${KERNELDIR}/gcc/bin/aarch64-linux-gnu-"
+    export CROSS_COMPILE_ARM32="${KERNELDIR}/gcc32/bin/arm-eabi-"
     make O=out ARCH=arm64 ${DEFCONFIG}
-    if [[ "${COMPILER_TYPE}" =~ "clang"* ]]; then
-        make -j$(nproc --all) CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- O=out ARCH=arm64
-    else
-	    make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE="${KERNELDIR}/gcc/bin/aarch64-elf-" CROSS_COMPILE_ARM32="${KERNELDIR}/gcc32/bin/arm-eabi-"
-    fi
+    make -j$(nproc --all) O=out ARCH=arm64
 
     # Check if compilation is done successfully.
     if ! [ -f "${OUTDIR}"/arch/arm64/boot/Image.gz-dtb ]; then
@@ -146,14 +143,14 @@ shipkernel() {
 ## Start the kernel buildflow ##
 setversioning
 tg_groupcast "compile started at $(date +%Y%m%d-%H%M)"
-tg_channelcast "Compiler: <code>${COMPILER_STRING}</code>" \
-               "Device: ${DEVICE}" \
+tg_channelcast "Device: ${DEVICE}" \
                "Kernel: <code>${KERNEL}, ${KERNELRELEASE}</code>" \
                "Linux Version: <code>$(make kernelversion)</code>" \
                "Branch: <code>${PARSE_BRANCH}</code>" \
                "Latest commit: <code>${COMMIT_POINT}</code>" \
                "Started at: <b>${BUILD_DATE}</b>"
 START=$(date +"%s")
+cloneak3
 makekernel || exit 1
 shipkernel
 END=$(date +"%s")
