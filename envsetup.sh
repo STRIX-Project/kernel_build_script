@@ -13,22 +13,11 @@
 KERNELDIR="$(pwd)"
 SCRIPTS=${KERNELDIR}/kernelscripts
 OUTDIR=${KERNELDIR}/out
-COMPILER_TYPES=clang
 
-# Pick your poison
-if [[ "${COMPILER_TYPES}" =~ "clang" ]]; then
-        git clone https://github.com/kdrag0n/proton-clang --depth=1 "${KERNELDIR}"/clang
-        COMPILER_STRING='Proton Clang (latest)'
-	COMPILER_TYPE='clang'
-else
-        # Default to GCC from Arter
-        git clone https://github.com/arter97/arm64-gcc --depth=1 "${KERNELDIR}/gcc"
-        git clone https://github.com/arter97/arm32-gcc --depth=1 "${KERNELDIR}/gcc32"
-        COMPILER_STRING='GCC 9.x'
-	COMPILER_TYPE='GCC9.x'
-fi
+git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b linaro8-20190402 --depth=1 "${KERNELDIR}/gcc"
+git clone https://github.com/innfinite4evr/android-prebuilts-gcc-linux-x86-arm-arm-eabi-7.2.git -b master --depth=1 "${KERNELDIR}/gcc32"
 
-export COMPILER_STRING COMPILER_TYPE KERNELDIR SCRIPTS OUTDIR
+export KERNELDIR SCRIPTS OUTDIR
 
 git clone https://github.com/fabianonline/telegram.sh/ telegram
 
