@@ -97,6 +97,7 @@ kernelstringfix() {
 
 # Clone Anykernel3
 cloneak3() {
+    rm -rf anykernel3
     git clone https://github.com/fiqri19102002/AnyKernel3.git -b whyred-aosp anykernel3
 }
 
@@ -178,6 +179,7 @@ makekernel || exit 1
 shipkernel
 setver2
 setnewcam
+cloneak3
 makekernel || exit 1
 shipkernel
 END=$(date +"%s")
