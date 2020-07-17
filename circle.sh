@@ -12,8 +12,8 @@ export ANYKERNEL=$(pwd)/anykernel3
 
 # Avoid hardcoding things
 KERNEL=STRIX
-DEFCONFIG=tulip_defconfig
-DEVICE=tulip
+DEFCONFIG=whyred_defconfig
+DEVICE=whyred
 CIPROVIDER=CircleCI
 PARSE_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 PARSE_ORIGIN="$(git config --get remote.origin.url)"
@@ -36,14 +36,13 @@ BUILD_DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 
 # Kernel revision
 KERNELTYPE=EAS
-KERNELRELEASE=tulip
+KERNELRELEASE=test
 
 # Function to replace defconfig versioning
 setversioning() {
 
     # For staging branch
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-nightly-${BUILD_DATE}"
-    sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-nightly-${BUILD_DATE}-oldcam"
 
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
@@ -98,7 +97,7 @@ kernelstringfix() {
 
 # Clone Anykernel3
 cloneak3() {
-    git clone https://github.com/fiqri19102002/AnyKernel3.git -b lineage-17.1-tulip anykernel3
+    git clone https://github.com/fiqri19102002/AnyKernel3.git -b whyred-aosp anykernel3
 }
 
 # Make the kernel
@@ -140,6 +139,30 @@ shipkernel() {
     cd ..
 }
 
+# Ship China firmware builds
+setnewcam() {
+    export CAMLIBS=NewCam
+    # Pick DSP change
+    sed -i 's/CONFIG_XIAOMI_NEW_CAMERA_BLOBS=n/CONFIG_XIAOMI_NEW_CAMERA_BLOBS=y/g' arch/arm64/configs/${DEFCONFIG}
+    echo -e "Newcam ready"
+}
+
+# Ship China firmware builds
+clearout() {
+    # Pick DSP change
+    rm -rf out
+    mkdir -p out
+}
+
+# Setver 2 for newcam
+setver2() {
+    KERNELNAME="${KERNEL}-${VERSION}-${KERNELRELEASE}-nightly-${BUILD_DATE}-NewCam-"
+    sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
+    export KERNELTYPE KERNELNAME
+    export TEMPZIPNAME="${KERNELNAME}-unsigned.zip"
+    export ZIPNAME="${KERNELNAME}.zip"
+}
+
 ## Start the kernel buildflow ##
 setversioning
 tg_groupcast "compile started at $(date +%Y%m%d-%H%M)"
@@ -151,6 +174,10 @@ tg_channelcast "Device: ${DEVICE}" \
                "Started at: <b>${BUILD_DATE}</b>"
 START=$(date +"%s")
 cloneak3
+makekernel || exit 1
+shipkernel
+setver2
+setnewcam
 makekernel || exit 1
 shipkernel
 END=$(date +"%s")
