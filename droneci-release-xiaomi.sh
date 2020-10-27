@@ -123,7 +123,7 @@ then
 	fi
 	if [ -n "$DRONE" ]
 	then
-		export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
+		export KBUILD_BUILD_VERSION="1"
 		export KBUILD_BUILD_HOST="DroneCI"
 		export CI_BRANCH=$DRONE_BRANCH
 	else
