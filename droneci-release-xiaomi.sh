@@ -223,7 +223,7 @@ tg_post_build() {
 # Function to replace defconfig versioning
 setversioning() {
     # For staging branch
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-$VERSION-$DATE"
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-$VERSION-olcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
@@ -318,11 +318,67 @@ gen_zip() {
 	cd ..
 }
 
+##--------------------------------------------------------------##
+
+# Now Its time for other stuffs like cloning
+cloneak() {
+	rm -rf "$KERNEL_DIR/AnyKernel3"
+	msg "|| Cloning Anykernel for tulip ||"
+	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b tulip
+}
+
+# Ship China firmware builds
+setnewcam() {
+    export CAMLIBS=NewCam
+    # Pick DSP change
+    sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/g' arch/arm64/configs/$DEFCONFIG
+    msg "|| Newcam for tulip ready ||"
+}
+
+# Ship China firmware builds
+clearout() {
+    # Pick DSP change
+    rm -rf out
+    mkdir -p out
+}
+
+# Setver 1 for newcam
+setversioning1() {
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-$VERSION-newcam-$DATE"
+    export KERNELTYPE KERNELNAME1
+    export ZIPNAME1="$KERNELNAME1.zip"
+}
+
+gen_zip1() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME1" * -x .git README.md
+
+	## Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME1"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
 setversioning
 clone
 exports
 build_kernel
 gen_zip
+setversioning1
+setnewcam
+cloneak
+build_kernel
+gen_zip1
 
 if [ $LOG_DEBUG = "1" ]
 then
@@ -338,7 +394,7 @@ rm -r "$KERNEL_DIR/out/arch/arm64/boot"
 ##----------------------------------------------------------##
 
 # Now Its time for other stuffs like cloning
-cloneak() {
+cloneak1() {
 	rm -rf "$KERNEL_DIR/AnyKernel3"
 	msg "|| Cloning Anykernel for whyred ||"
 	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b whyred
@@ -414,59 +470,15 @@ build_kernel1() {
 ##--------------------------------------------------------------##
 
 # Function to replace defconfig versioning
-setversioning1() {
-    # For staging branch
-    KERNELNAME1="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-$VERSION1-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME1
-    export ZIPNAME1="$KERNELNAME1.zip"
-}
-
-##--------------------------------------------------------------##
-
-gen_zip1() {
-	msg "|| Zipping into a flashable zip ||"
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
-	if [ $BUILD_DTBO = 1 ]
-	then
-		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
-	fi
-	cd AnyKernel3 || exit
-	zip -r9 "$ZIPNAME1" * -x .git README.md
-
-	## Prepare a final zip variable
-	ZIP_FINAL="$ZIPNAME1"
-
-	if [ "$PTTG" = 1 ]
- 	then
-		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
-	fi
-	cd ..
-}
-
-##--------------------------------------------------------------##
-
-# Ship China firmware builds
-setnewcam() {
-    export CAMLIBS=NewCam
-    # Pick DSP change
-    sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/g' arch/arm64/configs/$DEFCONFIG1
-    msg "|| Newcam for whyred ready ||"
-}
-
-# Ship China firmware builds
-clearout() {
-    # Pick DSP change
-    rm -rf out
-    mkdir -p out
-}
-
-# Setver 2 for newcam
 setversioning2() {
-	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-$VERSION1-newcam-$DATE"
+    # For staging branch
+    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-$VERSION1-oldcam-$DATE"
+    # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME2
     export ZIPNAME2="$KERNELNAME2.zip"
 }
+
+##--------------------------------------------------------------##
 
 gen_zip2() {
 	msg "|| Zipping into a flashable zip ||"
@@ -488,16 +500,60 @@ gen_zip2() {
 	cd ..
 }
 
-setversioning1
-cloneak
+##--------------------------------------------------------------##
+
+# Ship China firmware builds
+setnewcam1() {
+    export CAMLIBS=NewCam
+    # Pick DSP change
+    sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/g' arch/arm64/configs/$DEFCONFIG1
+    msg "|| Newcam for whyred ready ||"
+}
+
+# Ship China firmware builds
+clearout() {
+    # Pick DSP change
+    rm -rf out
+    mkdir -p out
+}
+
+# Setver 3 for newcam
+setversioning3() {
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-$VERSION1-newcam-$DATE"
+    export KERNELTYPE KERNELNAME3
+    export ZIPNAME3="$KERNELNAME3.zip"
+}
+
+gen_zip3() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME3" * -x .git README.md
+
+	## Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME3"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
+setversioning2
+cloneak1
 exports
 build_kernel1
-gen_zip1
-setversioning2
-setnewcam
-cloneak
-build_kernel1
 gen_zip2
+setversioning3
+setnewcam1
+cloneak1
+build_kernel1
+gen_zip3
 
 if [ $LOG_DEBUG = "1" ]
 then
