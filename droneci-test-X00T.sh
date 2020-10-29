@@ -147,8 +147,8 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	elif [ $COMPILER = "gcc" ]
 	then
 		msg "|| Cloning GCC ||"
-		git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b linaro8-20190402 --depth=1 gcc64
-		git clone https://github.com/innfinite4evr/android-prebuilts-gcc-linux-x86-arm-arm-eabi-7.2.git -b master --depth=1 gcc32
+		git clone https://github.com/kdrag0n/aarch64-elf-gcc.git -b 9.x --depth=1 gcc64
+		git clone https://github.com/kdrag0n/arm-eabi-gcc.git -b 9.x --depth=1 gcc32
 		GCC64_DIR=$KERNEL_DIR/gcc64
 		GCC32_DIR=$KERNEL_DIR/gcc32
 	fi
@@ -176,7 +176,7 @@ exports() {
 		PATH=$TC_DIR/bin/:$PATH
 	elif [ $COMPILER = "gcc" ]
 	then
-		KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-linux-gnu --version | head -n 1)
+		KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
 		PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 	fi
 
@@ -264,7 +264,7 @@ build_kernel() {
 	if [ $COMPILER = "gcc" ]
 	then
 		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-		make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
+		make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
 	fi
 
 	BUILD_END=$(date +"%s")
