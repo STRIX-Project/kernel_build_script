@@ -389,7 +389,8 @@ fi
 
 msg "|| compile for whyred device ||"
 
-rm -r "$KERNEL_DIR/out/arch/arm64/boot"
+rm -r "$KERNEL_DIR/out"
+mkdir "$KERNEL_DIR/out"
 
 ##----------------------------------------------------------##
 
@@ -511,7 +512,7 @@ setnewcam1() {
 }
 
 # Ship China firmware builds
-clearout() {
+clearout1() {
     # Pick DSP change
     rm -rf out
     mkdir -p out

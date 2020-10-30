@@ -385,7 +385,8 @@ fi
 
 msg "|| compile for whyred device ||"
 
-rm -r "$KERNEL_DIR/out/arch/arm64/boot"
+rm -r "$KERNEL_DIR/out"
+mkdir "$KERNEL_DIR/out"
 
 ##----------------------------------------------------------##
 
