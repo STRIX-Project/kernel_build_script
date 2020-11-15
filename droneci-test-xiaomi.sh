@@ -49,6 +49,10 @@ MODEL1="Redmi Note 5 Pro"
 DEVICE="tulip"
 DEVICE1="whyred"
 
+# Retrieves branch information
+CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+export CI_BRANCH
+
 # Kernel revision
 KERNELTYPE=EAS
 
@@ -103,8 +107,6 @@ LOG_DEBUG=0
 
 ## Set defaults first
 DISTRO=$(cat /etc/issue)
-CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-export CI_BRANCH
 export token="1206672611:AAGYbqxf4SN8f_Zsg3pa6nxOltilb3e8IN0"
 
 ## Check for CI
@@ -218,11 +220,19 @@ tg_post_build() {
 
 # Function to replace defconfig versioning
 setversioning() {
+if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
+    # For staging branch
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME
+    export ZIPNAME="$KERNELNAME.zip"
+else
     # For staging branch
     KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
+fi
 }
 
 ##--------------------------------------------------------------##
@@ -340,9 +350,15 @@ clearout() {
 
 # Setver 1 for newcam
 setversioning1() {
+if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
+    export KERNELTYPE KERNELNAME1
+    export ZIPNAME1="$KERNELNAME1.zip"
+else
 	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
+fi
 }
 
 gen_zip1() {
@@ -468,11 +484,19 @@ build_kernel1() {
 
 # Function to replace defconfig versioning
 setversioning2() {
+if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
     # For staging branch
+    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME2
+    export ZIPNAME2="$KERNELNAME2.zip"
+else
+	# For staging branch
     KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME2
     export ZIPNAME2="$KERNELNAME2.zip"
+fi
 }
 
 ##--------------------------------------------------------------##
@@ -516,9 +540,15 @@ clearout1() {
 
 # Setver 3 for newcam
 setversioning3() {
+if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
+    export KERNELTYPE KERNELNAME3
+    export ZIPNAME3="$KERNELNAME3.zip"
+else
 	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
+fi
 }
 
 gen_zip3() {
