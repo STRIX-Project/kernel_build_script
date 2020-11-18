@@ -151,9 +151,9 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 		TC_DIR=$KERNEL_DIR/clang
 	elif [ $COMPILER = "gcc" ]
 	then
-		msg "|| Cloning GCC 10.2.0 baremetal ||"
-		git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
-		git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
+		msg "|| Cloning GCC 11.0.0 baremetal (Eksperimental) ||"
+		git clone https://github.com/Reinazhard/gcc.git -b 11.x  --depth=1 gcc64
+		git clone https://github.com/Reinazhard/gcc.git -b 11.x-arm --depth=1 gcc32
 		GCC64_DIR=$KERNEL_DIR/gcc64
 		GCC32_DIR=$KERNEL_DIR/gcc32
 	fi
@@ -276,7 +276,7 @@ build_kernel() {
 
 	if [ $COMPILER = "gcc" ]
 	then
-		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-eabi-
 		make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
 	fi
 
@@ -454,7 +454,7 @@ build_kernel1() {
 
 	if [ $COMPILER = "gcc" ]
 	then
-		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-eabi-
 		make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
 	fi
 
