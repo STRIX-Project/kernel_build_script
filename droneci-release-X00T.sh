@@ -185,7 +185,7 @@ exports() {
 		PATH=$TC_DIR/bin/:$PATH
 	elif [ $COMPILER = "gcc" ]
 	then
-		KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-linux-gnu --version | head -n 1)
+		KBUILD_COMPILER_STRING="Built with Love"
 		PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 	fi
 
