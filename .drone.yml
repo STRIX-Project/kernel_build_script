@@ -2,7 +2,7 @@
 clone: 
   depth: 1
 kind: pipeline
-name: Wimbiyoas
+name: WimbiyoasPipeline
 steps: 
   - 
     commands: 
@@ -13,7 +13,7 @@ steps:
       GITHUB_TOKEN:
         from_secret: GH_TOKEN
     image: fadlyas/kernel_dockerfile:latest
-    name: Wimbiyoas
+    name: compile
     trigger: 
       branch: 
         - T1
