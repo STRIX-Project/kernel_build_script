@@ -16,4 +16,4 @@ steps:
     name: compile
     trigger: 
       branch: 
-        - T1
+        - T2
