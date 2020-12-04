@@ -62,8 +62,7 @@ KERNELTYPE=EAS
 KERNELRELEASE=stable
 
 # List the kernel version of each device
-VERSION="XT" # STRIX-EAS branch
-VERSION1="XR" # STRIX-EAS-OC branch
+VERSION="X"
 
 # Retrieves branch information
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
