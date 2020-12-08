@@ -85,7 +85,7 @@ PTTG=1
 	if [ $PTTG = 1 ]
 	then
 		# Set Telegram Chat ID
-		CHATID="-1001401913520"
+		CHATID="-1001115842872"
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
@@ -111,7 +111,7 @@ LOG_DEBUG=0
 
 ## Set defaults first
 DISTRO=$(cat /etc/issue)
-export token="1206672611:AAGYbqxf4SN8f_Zsg3pa6nxOltilb3e8IN0"
+export token="1238903125:AAHaJiQg0wL-lASfLgTr2LriBqu_qSHJFco"
 
 ## Check for CI
 if [ -n "$CI" ]
