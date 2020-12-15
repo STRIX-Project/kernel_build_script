@@ -55,6 +55,7 @@ export CI_BRANCH
 
 # Kernel revision
 KERNELTYPE=EAS
+KERNELTYPE1=HMP
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
@@ -151,11 +152,19 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 		TC_DIR=$KERNEL_DIR/clang
 	elif [ $COMPILER = "gcc" ]
 	then
-		msg "|| Cloning GCC 10.2.0 baremetal ||"
-		git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
-		git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
-		GCC64_DIR=$KERNEL_DIR/gcc64
-		GCC32_DIR=$KERNEL_DIR/gcc32
+		if [[ "$CI_BRANCH" == "sdm660-hmo-test" ]]; then
+			msg "|| Cloning GCC 8 & 5 baremetal ||"
+			git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b gcc8-201903-A --depth=1 gcc64
+			git clone https://github.com/arter97/arm-eabi-5.1.git -b master --depth=1 gcc32
+			GCC64_DIR=$KERNEL_DIR/gcc64
+			GCC32_DIR=$KERNEL_DIR/gcc32
+		else
+			msg "|| Cloning GCC 10.2.0 baremetal ||"
+			git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
+			git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
+			GCC64_DIR=$KERNEL_DIR/gcc64
+			GCC32_DIR=$KERNEL_DIR/gcc32
+		fi
 	fi
 
 	msg "|| Cloning Anykernel ||"
@@ -181,8 +190,13 @@ exports() {
 		PATH=$TC_DIR/bin/:$PATH
 	elif [ $COMPILER = "gcc" ]
 	then
-		KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
-		PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
+		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+			KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-linux-gnu --version | head -n 1)
+			PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
+		else
+			KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
+			PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
+		fi
 	fi
 
 	export PATH KBUILD_COMPILER_STRING
@@ -226,9 +240,13 @@ if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
-else
-    # For staging branch
+elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
     KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME
+    export ZIPNAME="$KERNELNAME.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
@@ -276,8 +294,13 @@ build_kernel() {
 
 	if [ $COMPILER = "gcc" ]
 	then
-		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-		make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
+		else
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+		fi
 	fi
 
 	BUILD_END=$(date +"%s")
@@ -354,8 +377,12 @@ if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
 	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
-else
+elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
+    export KERNELTYPE KERNELNAME1
+    export ZIPNAME1="$KERNELNAME1.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 fi
@@ -454,8 +481,13 @@ build_kernel1() {
 
 	if [ $COMPILER = "gcc" ]
 	then
-		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-		make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
+		else
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+		fi
 	fi
 
 	BUILD_END=$(date +"%s")
@@ -490,9 +522,15 @@ if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME2
     export ZIPNAME2="$KERNELNAME2.zip"
-else
+elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	# For staging branch
     KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME2
+    export ZIPNAME2="$KERNELNAME2.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+	# For staging branch
+    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME2
     export ZIPNAME2="$KERNELNAME2.zip"
@@ -544,8 +582,12 @@ if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
 	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
-else
+elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
+    export KERNELTYPE KERNELNAME3
+    export ZIPNAME3="$KERNELNAME3.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 fi
