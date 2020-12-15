@@ -374,15 +374,15 @@ clearout() {
 # Setver 1 for newcam
 setversioning1() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
+    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
-	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
+    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
+    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 fi
@@ -579,15 +579,15 @@ clearout1() {
 # Setver 3 for newcam
 setversioning3() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
+    KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
-	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
+    KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
+    KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 fi
