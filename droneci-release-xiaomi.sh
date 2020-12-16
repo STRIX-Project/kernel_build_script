@@ -63,8 +63,8 @@ KERNELTYPE=EAS
 KERNELRELEASE=stable
 
 # List the kernel version of each device
-VERSION=v3.2 # Tulip device
-VERSION1=v3.6 # Whyred device
+VERSION=v3.3 # Tulip device
+VERSION1=v3.7 # Whyred device
 
 # Show manufacturer info
 MANUFACTURERINFO="XiaoMI, Inc."
