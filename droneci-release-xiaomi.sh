@@ -226,13 +226,13 @@ tg_post_build() {
 setversioning() {
 if [[ "$CI_BRANCH" == "sdm660-oc-release" ]]; then
     # For staging branch
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-olcam-$DATE"
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
 else
     # For staging branch
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-$VERSION-olcam-$DATE"
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-$VERSION-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
