@@ -67,7 +67,12 @@ MANUFACTURERINFO="XiaoMI, Inc."
 
 # Specify compiler. 
 # 'clang' or 'gcc'
-COMPILER=gcc
+if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+	COMPILER=clang
+else
+	COMPILER=gcc
+fi
+
 	if [ $COMPILER = "clang" ]
 	then
 		# install few necessary packages
@@ -152,7 +157,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 		TC_DIR=$KERNEL_DIR/clang
 	elif [ $COMPILER = "gcc" ]
 	then
-		if [[ "$CI_BRANCH" == "sdm660-hmo-test" ]]; then
+		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
 			msg "|| Cloning GCC 8 & 5 baremetal ||"
 			git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b gcc8-201903-A --depth=1 gcc64
 			git clone https://github.com/arter97/arm-eabi-5.1.git -b master --depth=1 gcc32
@@ -408,16 +413,24 @@ gen_zip1() {
 	cd ..
 }
 
-setversioning
-clone
-exports
-build_kernel
-gen_zip
-setversioning1
-setnewcam
-cloneak
-build_kernel
-gen_zip1
+if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+	setversioning
+	clone
+	exports
+	build_kernel
+	gen_zip
+else
+	setversioning
+	clone
+	exports
+	build_kernel
+	gen_zip
+	setversioning1
+	setnewcam
+	cloneak
+	build_kernel
+	gen_zip1
+fi
 
 if [ $LOG_DEBUG = "1" ]
 then
@@ -613,16 +626,24 @@ gen_zip3() {
 	cd ..
 }
 
-setversioning2
-cloneak1
-exports
-build_kernel1
-gen_zip2
-setversioning3
-setnewcam1
-cloneak1
-build_kernel1
-gen_zip3
+if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+	setversioning2
+	cloneak1
+	exports
+	build_kernel1
+	gen_zip2
+else
+	setversioning2
+	cloneak1
+	exports
+	build_kernel1
+	gen_zip2
+	setversioning3
+	setnewcam1
+	cloneak1
+	build_kernel1
+	gen_zip3
+fi
 
 if [ $LOG_DEBUG = "1" ]
 then
