@@ -413,24 +413,16 @@ gen_zip1() {
 	cd ..
 }
 
-if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-	setversioning
-	clone
-	exports
-	build_kernel
-	gen_zip
-else
-	setversioning
-	clone
-	exports
-	build_kernel
-	gen_zip
-	setversioning1
-	setnewcam
-	cloneak
-	build_kernel
-	gen_zip1
-fi
+setversioning
+clone
+exports
+build_kernel
+gen_zip
+setversioning1
+setnewcam
+cloneak
+build_kernel
+gen_zip1
 
 if [ $LOG_DEBUG = "1" ]
 then
@@ -626,24 +618,16 @@ gen_zip3() {
 	cd ..
 }
 
-if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-	setversioning2
-	cloneak1
-	exports
-	build_kernel1
-	gen_zip2
-else
-	setversioning2
-	cloneak1
-	exports
-	build_kernel1
-	gen_zip2
-	setversioning3
-	setnewcam1
-	cloneak1
-	build_kernel1
-	gen_zip3
-fi
+setversioning2
+cloneak1
+exports
+build_kernel1
+gen_zip2
+setversioning3
+setnewcam1
+cloneak1
+build_kernel1
+gen_zip3
 
 if [ $LOG_DEBUG = "1" ]
 then
