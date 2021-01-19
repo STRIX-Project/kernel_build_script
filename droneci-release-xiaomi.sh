@@ -66,6 +66,7 @@ KERNELRELEASE=stable
 # List the kernel version of each device
 VERSION=v3.5 # Tulip device
 VERSION1=v3.9 # Whyred device
+VERSION2=v1.0 # for HMP branch (tulip & whyred)
 
 # Show manufacturer info
 MANUFACTURERINFO="XiaoMI, Inc."
@@ -259,7 +260,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export ZIPNAME="$KERNELNAME.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
     # For staging branch
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-oldcam-$DATE"
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-$VERSION2-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
@@ -395,7 +396,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
-	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-$VERSION2-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 fi
@@ -544,7 +545,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export ZIPNAME2="$KERNELNAME2.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
     # For staging branch
-    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE--oldcam-$DATE"
+    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-$VERSION2-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME2
     export ZIPNAME2="$KERNELNAME2.zip"
@@ -601,7 +602,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 elif [[ "$CI_BRANCH" == "sdm660-HMP-release" ]]; then
-	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-$VERSION2-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 fi
