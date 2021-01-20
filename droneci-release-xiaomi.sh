@@ -601,7 +601,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
 	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-$VERSION1-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
-elif [[ "$CI_BRANCH" == "sdm660-HMP-release" ]]; then
+elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
 	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-$VERSION2-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
