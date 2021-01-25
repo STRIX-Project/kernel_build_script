@@ -66,7 +66,7 @@ KERNELRELEASE=stable
 # List the kernel version of each device
 VERSION=v3.5 # Tulip device
 VERSION1=v3.9 # Whyred device
-VERSION2=v1.0 # for HMP branch (tulip & whyred)
+VERSION2=v1.1 # for HMP branch (tulip & whyred)
 
 # Show manufacturer info
 MANUFACTURERINFO="XiaoMI, Inc."
