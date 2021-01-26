@@ -1,23 +1,22 @@
 #! /bin/bash
 
- # Script For Building Android arm64 Kernel
- #
- # Copyright (c) 2018-2020 Panchajanya1999 <rsk52959@gmail.com>
- #
- # Licensed under the Apache License, Version 2.0 (the "License");
- # you may not use this file except in compliance with the License.
- # You may obtain a copy of the License at
- #
- #      http://www.apache.org/licenses/LICENSE-2.0
- #
- # Unless required by applicable law or agreed to in writing, software
- # distributed under the License is distributed on an "AS IS" BASIS,
- # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- # See the License for the specific language governing permissions and
- # limitations under the License.
- #
-
-#Kernel building script
+# Script For Building Android arm64 Kernel
+#
+# Copyright (c) 2018-2020 Panchajanya1999 <rsk52959@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Kernel building script
 
 # Function to show an informational message
 msg() {
@@ -158,7 +157,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	elif [ $COMPILER = "gcc" ]
 	then
 		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-			msg "|| Cloning GCC 8 & 5 baremetal ||"
+			msg "|| Cloning GCC 8 & 5 ||"
 			git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b gcc8-201903-A --depth=1 gcc64
 			git clone https://github.com/arter97/arm-eabi-5.1.git -b master --depth=1 gcc32
 			GCC64_DIR=$KERNEL_DIR/gcc64
@@ -240,26 +239,21 @@ tg_post_build() {
 # Function to replace defconfig versioning
 setversioning() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-    # For staging branch
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME
-    export ZIPNAME="$KERNELNAME.zip"
+	KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME
+	export ZIPNAME="$KERNELNAME.zip"
 elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME
-    export ZIPNAME="$KERNELNAME.zip"
+	KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME
+	export ZIPNAME="$KERNELNAME.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME
-    export ZIPNAME="$KERNELNAME.zip"
+	KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME
+	export ZIPNAME="$KERNELNAME.zip"
 else
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME
-    export ZIPNAME="$KERNELNAME.zip"
+	KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME
+	export ZIPNAME="$KERNELNAME.zip"
 fi
 }
 
@@ -384,21 +378,21 @@ clearout() {
 # Setver 1 for newcam
 setversioning1() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME1
-    export ZIPNAME1="$KERNELNAME1.zip"
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME1
+	export ZIPNAME1="$KERNELNAME1.zip"
 elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
-    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME1
-    export ZIPNAME1="$KERNELNAME1.zip"
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME1
+	export ZIPNAME1="$KERNELNAME1.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME1
-    export ZIPNAME1="$KERNELNAME1.zip"
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME1
+	export ZIPNAME1="$KERNELNAME1.zip"
 else
-    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME1
-    export ZIPNAME1="$KERNELNAME1.zip"
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME1
+	export ZIPNAME1="$KERNELNAME1.zip"
 fi
 }
 
@@ -531,29 +525,21 @@ build_kernel1() {
 # Function to replace defconfig versioning
 setversioning2() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-    # For staging branch
-    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME2
-    export ZIPNAME2="$KERNELNAME2.zip"
+	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME2
+	export ZIPNAME2="$KERNELNAME2.zip"
 elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
-	# For staging branch
-    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME2
-    export ZIPNAME2="$KERNELNAME2.zip"
+	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME2
+	export ZIPNAME2="$KERNELNAME2.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-	# For staging branch
-    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME2
-    export ZIPNAME2="$KERNELNAME2.zip"
+	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME2
+	export ZIPNAME2="$KERNELNAME2.zip"
 else
-	# For staging branch
-    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
-    # Export our new localversion and zipnames
-    export KERNELTYPE KERNELNAME2
-    export ZIPNAME2="$KERNELNAME2.zip"
+	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME2
+	export ZIPNAME2="$KERNELNAME2.zip"
 fi
 }
 
@@ -569,7 +555,7 @@ gen_zip2() {
 	cd AnyKernel3 || exit
 	zip -r9 "$ZIPNAME2" * -x .git README.md
 
-	## Prepare a final zip variable
+	# Prepare a final zip variable
 	ZIP_FINAL="$ZIPNAME2"
 
 	if [ "$PTTG" = 1 ]
@@ -600,20 +586,20 @@ clearout1() {
 setversioning3() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
     KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME3
-    export ZIPNAME3="$KERNELNAME3.zip"
+	export KERNELTYPE KERNELNAME3
+	export ZIPNAME3="$KERNELNAME3.zip"
 elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
-    KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME3
-    export ZIPNAME3="$KERNELNAME3.zip"
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME3
+	export ZIPNAME3="$KERNELNAME3.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
-    KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME3
-    export ZIPNAME3="$KERNELNAME3.zip"
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME3
+	export ZIPNAME3="$KERNELNAME3.zip"
 else
-    KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
-    export KERNELTYPE KERNELNAME3
-    export ZIPNAME3="$KERNELNAME3.zip"
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME3
+	export ZIPNAME3="$KERNELNAME3.zip"
 fi
 }
 
