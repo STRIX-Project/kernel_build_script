@@ -255,6 +255,11 @@ elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
+else
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME
+    export ZIPNAME="$KERNELNAME.zip"
 fi
 }
 
@@ -388,6 +393,10 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
     export ZIPNAME1="$KERNELNAME1.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
     KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
+    export KERNELTYPE KERNELNAME1
+    export ZIPNAME1="$KERNELNAME1.zip"
+else
+    KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 fi
@@ -539,6 +548,12 @@ elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME2
     export ZIPNAME2="$KERNELNAME2.zip"
+else
+	# For staging branch
+    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME2
+    export ZIPNAME2="$KERNELNAME2.zip"
 fi
 }
 
@@ -593,6 +608,10 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
     export ZIPNAME3="$KERNELNAME3.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
     KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
+    export KERNELTYPE KERNELNAME3
+    export ZIPNAME3="$KERNELNAME3.zip"
+else
+    KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 fi
