@@ -66,7 +66,7 @@ MANUFACTURERINFO="XiaoMI, Inc."
 
 # Specify compiler. 
 # 'clang' or 'gcc'
-if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 	COMPILER=clang
 else
 	COMPILER=gcc
@@ -156,7 +156,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 		TC_DIR=$KERNEL_DIR/clang
 	elif [ $COMPILER = "gcc" ]
 	then
-		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+		if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 			msg "|| Cloning GCC 8 & 5 ||"
 			git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b gcc8-201903-A --depth=1 gcc64
 			git clone https://github.com/arter97/arm-eabi-5.1.git -b master --depth=1 gcc32
@@ -194,7 +194,7 @@ exports() {
 		PATH=$TC_DIR/bin/:$PATH
 	elif [ $COMPILER = "gcc" ]
 	then
-		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+		if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 			KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-linux-gnu --version | head -n 1)
 			PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 		else
@@ -246,7 +246,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-oldcam-$DATE"
 	export KERNELTYPE KERNELNAME
 	export ZIPNAME="$KERNELNAME.zip"
-elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 	KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-oldcam-$DATE"
 	export KERNELTYPE KERNELNAME
 	export ZIPNAME="$KERNELNAME.zip"
@@ -298,7 +298,7 @@ build_kernel() {
 
 	if [ $COMPILER = "gcc" ]
 	then
-		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+		if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
 			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		else
@@ -385,7 +385,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME1
 	export ZIPNAME1="$KERNELNAME1.zip"
-elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME1
 	export ZIPNAME1="$KERNELNAME1.zip"
@@ -489,7 +489,7 @@ build_kernel1() {
 
 	if [ $COMPILER = "gcc" ]
 	then
-		if [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+		if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
 			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		else
@@ -532,7 +532,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
 	export KERNELTYPE KERNELNAME2
 	export ZIPNAME2="$KERNELNAME2.zip"
-elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-oldcam-$DATE"
 	export KERNELTYPE KERNELNAME2
 	export ZIPNAME2="$KERNELNAME2.zip"
@@ -592,7 +592,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME3
 	export ZIPNAME3="$KERNELNAME3.zip"
-elif [[ "$CI_BRANCH" == "sdm660-hmp-test" ]]; then
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME3
 	export ZIPNAME3="$KERNELNAME3.zip"
