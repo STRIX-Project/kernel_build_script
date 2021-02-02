@@ -195,7 +195,7 @@ exports() {
 	elif [ $COMPILER = "gcc" ]
 	then
 		if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
-			KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-linux-gnu --version | head -n 1)
+			KBUILD_COMPILER_STRING="gcc version 8.3.0(GNU Toolchain for the A-profile Architecture 8.3-2019.03(arm-rel-8.36))"
 			PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 		else
 			KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
