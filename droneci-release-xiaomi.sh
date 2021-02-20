@@ -64,8 +64,8 @@ KERNELTYPE1=HMP
 KERNELRELEASE=stable
 
 # List the kernel version of each device
-VERSION=v3.7 # Tulip device
-VERSION1=v4.1 # Whyred device
+VERSION=v3.8 # Tulip device
+VERSION1=v4.2 # Whyred device
 VERSION2=v1.1 # for HMP branch (tulip & whyred)
 
 # Show manufacturer info
