@@ -164,8 +164,8 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 			GCC32_DIR=$KERNEL_DIR/gcc32
 		else
 			msg "|| Cloning GCC 10.2.0 baremetal ||"
-			git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
-			git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
+			git clone https://github.com/theradcolor/aarch64-linux-gnu.git -b stable-gcc --depth=1 gcc64
+			git clone https://github.com/theradcolor/arm-linux-gnueabi.git -b stable-gcc --depth=1 gcc32
 			GCC64_DIR=$KERNEL_DIR/gcc64
 			GCC32_DIR=$KERNEL_DIR/gcc32
 		fi
@@ -302,8 +302,8 @@ build_kernel() {
 			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
 			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		else
-			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		fi
 	fi
 
@@ -501,8 +501,8 @@ build_kernel1() {
 			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
 			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		else
-			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		fi
 	fi
 
