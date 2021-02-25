@@ -112,7 +112,7 @@ LOG_DEBUG=0
 
 ## Set defaults first
 DISTRO=$(cat /etc/issue)
-export token="1206672611:AAGYbqxf4SN8f_Zsg3pa6nxOltilb3e8IN0"
+export token="1403505039:AAFD8h6SdoZbAqKjkCI_VN3Goom4hG4OE8I"
 
 ## Check for CI
 if [ -n "$CI" ]
