@@ -76,6 +76,8 @@ fi
 	then
 		# install few necessary packages
 		apt-get -y install llvm lld
+	else
+		apt-get -y install libfl-dev
 	fi
 
 # Clean source prior building. 1 is NO(default) | 0 is YES
