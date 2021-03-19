@@ -171,8 +171,8 @@ clone() {
 			GCC32_DIR=$KERNEL_DIR/gcc32
 		else
 			msg "|| Cloning GCC 10.2.0 baremetal ||"
-			git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
-			git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
+			git clone https://github.com/fiqri19102002/aarch64-gcc.git -b elf-gcc-10 --depth=1 gcc64
+			git clone https://github.com/fiqri19102002/arm-gcc.git -b elf-gcc-10 --depth=1 gcc32
 			GCC64_DIR=$KERNEL_DIR/gcc64
 			GCC32_DIR=$KERNEL_DIR/gcc32
 		fi
