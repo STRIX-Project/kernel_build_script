@@ -166,8 +166,8 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 			GCC32_DIR=$KERNEL_DIR/gcc32
 		else
 			msg "|| Cloning GCC 11.0 eksperimental ||"
-			git clone https://github.com/fiqri19102002/aarch64-gcc.git -b elf-gcc-10 --depth=1 gcc64
-			git clone https://github.com/fiqri19102002/arm-gcc.git -b elf-gcc-10 --depth=1 gcc32
+			git clone https://github.com/fiqri19102002/aarch64-gcc.git -b master --depth=1 gcc64
+			git clone https://github.com/fiqri19102002/arm-gcc.git -b master --depth=1 gcc32
 			GCC64_DIR=$KERNEL_DIR/gcc64
 			GCC32_DIR=$KERNEL_DIR/gcc32
 		fi
@@ -200,7 +200,7 @@ exports() {
 			KBUILD_COMPILER_STRING="gcc version 8.3.0(GNU Toolchain for the A-profile Architecture 8.3-2019.03(arm-rel-8.36))"
 			PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 		else
-			KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
+			KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-linux-gnu-gcc --version | head -n 1)
 			PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 		fi
 	fi
@@ -304,8 +304,8 @@ build_kernel() {
 			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
 			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		else
-			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		fi
 	fi
 
@@ -503,8 +503,8 @@ build_kernel1() {
 			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
 			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		else
-			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
 		fi
 	fi
 
