@@ -43,10 +43,12 @@ TYPE="nightly"
 # The name of the device for which the kernel is built
 MODEL="Redmi Note 6 Pro"
 MODEL1="Redmi Note 5 Pro"
+MODEL2="MI 6X/A2"
 
 # The codename of the device
 DEVICE="tulip"
 DEVICE1="whyred"
+DEVICE2="wayne"
 
 # Retrieves branch information
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -60,6 +62,7 @@ KERNELTYPE1=HMP
 # your device or check source
 DEFCONFIG=tulip_defconfig
 DEFCONFIG1=whyred_defconfig
+DEFCONFIG2=wayne_defconfig
 
 # Show manufacturer info
 MANUFACTURERINFO="XiaoMI, Inc."
@@ -651,6 +654,152 @@ else
 	build_kernel1
 	gen_zip3
 fi
+
+if [ $LOG_DEBUG = "1" ]
+then
+	tg_post_build "error.log" "$CHATID" "Debug Mode Logs"
+fi
+
+##----------------------------------------------------------##
+
+msg "|| compile for wayne/jasmine device ||"
+
+rm -r "$KERNEL_DIR/out"
+mkdir "$KERNEL_DIR/out"
+
+##----------------------------------------------------------##
+
+# Now Its time for other stuffs like cloning
+cloneak2() {
+	rm -rf "$KERNEL_DIR/AnyKernel3"
+	msg "|| Cloning Anykernel for wayne/jasmine ||"
+	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b wayne/jasmine
+}
+
+##------------------------------------------------------------------##
+
+build_kernel2() {
+	if [ $INCREMENTAL = 0 ]
+	then
+		msg "|| Cleaning Sources ||"
+		make clean && make mrproper && rm -rf out
+	fi
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_msg "<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL2 [$DEVICE2]</code>%0A<b>Manufacturer : </b><code>$MANUFACTURERINFO</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Last Commit : </b><code>$COMMIT_HEAD</code>%0A<b>Status : </b>#Nightly" "$CHATID"
+	fi
+
+	msg "|| Started Compilation ||"
+
+	make O=out $DEFCONFIG2
+	if [ $DEF_REG = 1 ]
+	then
+		cp .config arch/arm64/configs/$DEFCONFIG2
+		git add arch/arm64/configs/$DEFCONFIG2
+		git commit -m "$DEFCONFIG2: Regenerate
+
+						This is an auto-generated commit"
+	fi
+
+	BUILD_START=$(date +"%s")
+	
+	if [ $COMPILER = "clang" ]
+	then
+		make -j"$PROCS" O=out \
+				CROSS_COMPILE=aarch64-linux-gnu- \
+				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+				CC=clang \
+				AR=llvm-ar \
+				OBJDUMP=llvm-objdump \
+				STRIP=llvm-strip
+	fi
+
+	if [ $COMPILER = "gcc" ]
+	then
+		if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
+		else
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
+		fi
+	fi
+
+	BUILD_END=$(date +"%s")
+	DIFF=$((BUILD_END - BUILD_START))
+
+	if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb ] 
+	then
+		msg "|| Kernel successfully compiled ||"
+	elif ! [ -f $KERNEL_DIR/out/arch/arm64/boot/Image.gz-dtb ]
+	then
+		echo -e "Kernel compilation failed, See buildlog to fix errors"
+		tg_post_msg "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>" "$CHATID"
+		exit 1
+	fi
+
+	if [ $BUILD_DTBO = 1 ]
+	then
+		msg "|| Building DTBO ||"
+		tg_post_msg "<code>Building DTBO..</code>" "$CHATID"
+		python2 "$KERNEL_DIR/scripts/ufdt/libufdt/utils/src/mkdtboimg.py" \
+			create "$KERNEL_DIR/out/arch/arm64/boot/dtbo.img" --page_size=4096 "$KERNEL_DIR/out/arch/arm64/boot/dts/qcom/sm6150-idp-overlay.dtbo"
+	fi
+}
+
+##--------------------------------------------------------------##
+
+# Function to replace defconfig versioning
+setversioning4() {
+if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-OC-$TYPE-$DATE"
+	export KERNELTYPE KERNELNAME4
+	export ZIPNAME4="$KERNELNAME4.zip"
+elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$DATE"
+	export KERNELTYPE KERNELNAME4
+	export ZIPNAME4="$KERNELNAME4.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE1-$TYPE-$DATE"
+	export KERNELTYPE KERNELNAME4
+	export ZIPNAME4="$KERNELNAME4.zip"
+else
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$DATE"
+	export KERNELTYPE KERNELNAME4
+	export ZIPNAME4="$KERNELNAME4.zip"
+fi
+}
+
+##--------------------------------------------------------------##
+
+gen_zip4() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME4" * -x .git README.md
+
+	# Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME4"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
+##--------------------------------------------------------------##
+
+	setversioning4
+	cloneak2
+	exports
+	build_kernel2
+	gen_zip4
 
 if [ $LOG_DEBUG = "1" ]
 then
