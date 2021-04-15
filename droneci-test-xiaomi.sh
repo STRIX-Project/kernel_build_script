@@ -753,19 +753,19 @@ build_kernel2() {
 # Function to replace defconfig versioning
 setversioning4() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-OC-$TYPE-$DATE"
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME4
 	export ZIPNAME4="$KERNELNAME4.zip"
 elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
-	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$DATE"
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME4
 	export ZIPNAME4="$KERNELNAME4.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
-	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE1-$TYPE-$DATE"
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE1-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME4
 	export ZIPNAME4="$KERNELNAME4.zip"
 else
-	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$DATE"
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME4
 	export ZIPNAME4="$KERNELNAME4.zip"
 fi
@@ -795,11 +795,74 @@ gen_zip4() {
 
 ##--------------------------------------------------------------##
 
+# Ship China firmware builds
+setoldcam() {
+    export CAMLIBS=OldCam
+    # Pick DSP change
+    sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/g' arch/arm64/configs/$DEFCONFIG2
+    msg "|| Oldcam for MI 6X/A2 ready ||"
+}
+
+# Ship China firmware builds
+clearout2() {
+    # Pick DSP change
+    rm -rf out
+    mkdir -p out
+}
+
+# Setver 3 for newcam
+setversioning5() {
+if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
+    KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME5
+	export ZIPNAME5="$KERNELNAME5.zip"
+elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
+	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME5
+	export ZIPNAME5="$KERNELNAME5.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
+	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE1-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME5
+	export ZIPNAME5="$KERNELNAME5.zip"
+else
+	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME5
+	export ZIPNAME5="$KERNELNAME5.zip"
+fi
+}
+
+gen_zip5() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME5" * -x .git README.md
+
+	## Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME5"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
+##--------------------------------------------------------------##
+
 	setversioning4
 	cloneak2
 	exports
 	build_kernel2
 	gen_zip4
+	setversioning5
+	setoldcam
+	cloneak2
+	build_kernel2
+	gen_zip5
 
 if [ $LOG_DEBUG = "1" ]
 then
