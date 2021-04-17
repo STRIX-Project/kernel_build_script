@@ -752,11 +752,7 @@ build_kernel2() {
 
 # Function to replace defconfig versioning
 setversioning4() {
-if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
-	export KERNELTYPE KERNELNAME4
-	export ZIPNAME4="$KERNELNAME4.zip"
-elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
+if [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-newcam-$DATE"
 	export KERNELTYPE KERNELNAME4
 	export ZIPNAME4="$KERNELNAME4.zip"
@@ -812,11 +808,7 @@ clearout2() {
 
 # Setver 3 for newcam
 setversioning5() {
-if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
-    KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
-	export KERNELTYPE KERNELNAME5
-	export ZIPNAME5="$KERNELNAME5.zip"
-elif [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
+if [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-oldcam-$DATE"
 	export KERNELTYPE KERNELNAME5
 	export ZIPNAME5="$KERNELNAME5.zip"
