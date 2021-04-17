@@ -44,10 +44,12 @@ TYPE="stable"
 # The name of the device for which the kernel is built
 MODEL="Redmi Note 6 Pro"
 MODEL1="Redmi Note 5 Pro"
+MODEL2="MI 6X/A2"
 
 # The codename of the device
 DEVICE="tulip"
 DEVICE1="whyred"
+DEVICE2="wayne"
 
 # Retrieves branch information
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -57,6 +59,7 @@ export CI_BRANCH
 # your device or check source
 DEFCONFIG=tulip_defconfig
 DEFCONFIG1=whyred_defconfig
+DEFCONFIG2=wayne_defconfig
 
 # Kernel revision
 KERNELTYPE=EAS
@@ -66,7 +69,8 @@ KERNELRELEASE=stable
 # List the kernel version of each device
 VERSION=v4.2 # Tulip device
 VERSION1=v4.6 # Whyred device
-VERSION2=v1.1 # for HMP branch (tulip & whyred)
+VERSION2=v1.0 # Jasmine/wayne device
+VERSION3=v1.1 # for HMP branch (tulip & whyred)
 
 # Show manufacturer info
 MANUFACTURERINFO="XiaoMI, Inc."
@@ -260,7 +264,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export ZIPNAME="$KERNELNAME.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
     # For staging branch
-    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-$VERSION2-oldcam-$DATE"
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-$VERSION3-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
@@ -396,7 +400,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
-	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-$VERSION2-newcam-$DATE"
+	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE1-$TYPE-$VERSION3-newcam-$DATE"
     export KERNELTYPE KERNELNAME1
     export ZIPNAME1="$KERNELNAME1.zip"
 fi
@@ -545,7 +549,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export ZIPNAME2="$KERNELNAME2.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
     # For staging branch
-    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-$VERSION2-oldcam-$DATE"
+    KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-$VERSION3-oldcam-$DATE"
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME2
     export ZIPNAME2="$KERNELNAME2.zip"
@@ -602,7 +606,7 @@ elif [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 elif [[ "$CI_BRANCH" == "sdm660-hmp-release" ]]; then
-	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-$VERSION2-newcam-$DATE"
+	KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE1-$TYPE-$VERSION3-newcam-$DATE"
     export KERNELTYPE KERNELNAME3
     export ZIPNAME3="$KERNELNAME3.zip"
 fi
@@ -645,3 +649,194 @@ then
 fi
 
 ##------------------------------------------------------------------##
+
+msg "|| compile for wayne/jasmine device ||"
+
+rm -r "$KERNEL_DIR/out"
+mkdir "$KERNEL_DIR/out"
+
+##----------------------------------------------------------##
+
+# Now Its time for other stuffs like cloning
+cloneak2() {
+	rm -rf "$KERNEL_DIR/AnyKernel3"
+	msg "|| Cloning Anykernel for wayne/jasmine ||"
+	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b wayne/jasmine
+}
+
+##------------------------------------------------------------------##
+
+build_kernel2() {
+	if [ $INCREMENTAL = 0 ]
+	then
+		msg "|| Cleaning Sources ||"
+		make clean && make mrproper && rm -rf out
+	fi
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_msg "<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL2 [$DEVICE2]</code>%0A<b>Manufacture : </b><code>$MANUFACTUREINFO</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Last Commit : </b><code>$COMMIT_HEAD</code>%0A" "$CHATID"
+	fi
+
+	msg "|| Started Compilation ||"
+
+	make O=out $DEFCONFIG2
+	if [ $DEF_REG = 1 ]
+	then
+		cp .config arch/arm64/configs/$DEFCONFIG2
+		git add arch/arm64/configs/$DEFCONFIG2
+		git commit -m "$DEFCONFIG2: Regenerate
+
+						This is an auto-generated commit"
+	fi
+
+	BUILD_START=$(date +"%s")
+	
+	if [ $COMPILER = "clang" ]
+	then
+		make -j"$PROCS" O=out \
+				CROSS_COMPILE=aarch64-linux-gnu- \
+				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+				CC=clang \
+				AR=llvm-ar \
+				OBJDUMP=llvm-objdump \
+				STRIP=llvm-strip
+	fi
+
+	if [ $COMPILER = "gcc" ]
+	then
+		if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
+		else
+			export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
+			make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu-
+		fi
+	fi
+
+	BUILD_END=$(date +"%s")
+	DIFF=$((BUILD_END - BUILD_START))
+
+	if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb ] 
+	then
+		msg "|| Kernel successfully compiled ||"
+	elif ! [ -f $KERNEL_DIR/out/arch/arm64/boot/Image.gz-dtb ]
+	then
+		echo -e "Kernel compilation failed, See buildlog to fix errors"
+		tg_post_msg "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>" "$CHATID"
+		exit 1
+	fi
+
+	if [ $BUILD_DTBO = 1 ]
+	then
+		msg "|| Building DTBO ||"
+		tg_post_msg "<code>Building DTBO..</code>" "$CHATID"
+		python2 "$KERNEL_DIR/scripts/ufdt/libufdt/utils/src/mkdtboimg.py" \
+			create "$KERNEL_DIR/out/arch/arm64/boot/dtbo.img" --page_size=4096 "$KERNEL_DIR/out/arch/arm64/boot/dts/qcom/sm6150-idp-overlay.dtbo"
+	fi
+}
+
+##--------------------------------------------------------------##
+
+# Set naming to new cam for zip file
+setversioning4() {
+if [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$VERSION2-newcam-$DATE"
+	export KERNELTYPE KERNELNAME4
+	export ZIPNAME4="$KERNELNAME4.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE1-$TYPE-newcam-$DATE"
+	export KERNELTYPE KERNELNAME4
+	export ZIPNAME4="$KERNELNAME4.zip"
+else
+	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$VERSION2-newcam-$DATE"
+	export KERNELTYPE KERNELNAME4
+	export ZIPNAME4="$KERNELNAME4.zip"
+fi
+}
+
+##--------------------------------------------------------------##
+
+gen_zip4() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME4" * -x .git README.md
+
+	# Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME4"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
+##--------------------------------------------------------------##
+
+# Ship China firmware builds
+setoldcam() {
+    # Switch to old cam from defconfig
+    sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/g' arch/arm64/configs/$DEFCONFIG2
+    msg "|| Oldcam for MI 6X/A2 ready ||"
+}
+
+# Set naming to old cam for zip file
+setversioning5() {
+if [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
+	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$VERSION2-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME5
+	export ZIPNAME5="$KERNELNAME5.zip"
+elif [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
+	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE1-$TYPE-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME5
+	export ZIPNAME5="$KERNELNAME5.zip"
+else
+	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-$VERSION2-oldcam-$DATE"
+	export KERNELTYPE KERNELNAME5
+	export ZIPNAME5="$KERNELNAME5.zip"
+fi
+}
+
+gen_zip5() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME5" * -x .git README.md
+
+	## Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME5"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
+##--------------------------------------------------------------##
+
+	setversioning4
+	cloneak2
+	exports
+	build_kernel2
+	gen_zip4
+	setversioning5
+	setoldcam
+	cloneak2
+	build_kernel2
+	gen_zip5
+
+if [ $LOG_DEBUG = "1" ]
+then
+	tg_post_build "error.log" "$CHATID" "Debug Mode Logs"
+fi
