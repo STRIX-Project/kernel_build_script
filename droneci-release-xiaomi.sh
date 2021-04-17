@@ -825,6 +825,7 @@ gen_zip5() {
 
 ##--------------------------------------------------------------##
 
+if [[ "$CI_BRANCH" == "sdm660-eas-release" ]]; then
 	setversioning4
 	cloneak2
 	exports
@@ -835,6 +836,7 @@ gen_zip5() {
 	cloneak2
 	build_kernel2
 	gen_zip5
+fi
 
 if [ $LOG_DEBUG = "1" ]
 then
