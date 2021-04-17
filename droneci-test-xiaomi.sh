@@ -241,7 +241,7 @@ tg_post_build() {
 
 ##----------------------------------------------------------##
 
-# Function to replace defconfig versioning
+# Set naming to old cam for zip file
 setversioning() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
 	KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
@@ -367,20 +367,12 @@ cloneak() {
 
 # Ship China firmware builds
 setnewcam() {
-    export CAMLIBS=NewCam
-    # Pick DSP change
+    # Switch to new cam blob from defconfig
     sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/g' arch/arm64/configs/$DEFCONFIG
     msg "|| Newcam for tulip ready ||"
 }
 
-# Ship China firmware builds
-clearout() {
-    # Pick DSP change
-    rm -rf out
-    mkdir -p out
-}
-
-# Setver 1 for newcam
+# Set naming to new cam for zip file
 setversioning1() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
 	KERNELNAME1="$KERNEL-$DEVICE-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
@@ -535,7 +527,7 @@ build_kernel1() {
 
 ##--------------------------------------------------------------##
 
-# Function to replace defconfig versioning
+# Set naming to old cam for zip file
 setversioning2() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
 	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-oldcam-$DATE"
@@ -582,20 +574,12 @@ gen_zip2() {
 
 # Ship China firmware builds
 setnewcam1() {
-    export CAMLIBS=NewCam
-    # Pick DSP change
+    # Switch to new cam from defconfig
     sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/g' arch/arm64/configs/$DEFCONFIG1
     msg "|| Newcam for whyred ready ||"
 }
 
-# Ship China firmware builds
-clearout1() {
-    # Pick DSP change
-    rm -rf out
-    mkdir -p out
-}
-
-# Setver 3 for newcam
+# Set naming to new cam for zip file
 setversioning3() {
 if [[ "$CI_BRANCH" == "sdm660-oc-test" ]]; then
     KERNELNAME3="$KERNEL-$DEVICE1-$KERNELTYPE-OC-$TYPE-newcam-$DATE"
@@ -750,7 +734,7 @@ build_kernel2() {
 
 ##--------------------------------------------------------------##
 
-# Function to replace defconfig versioning
+# Set naming to new cam for zip file
 setversioning4() {
 if [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME4="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-newcam-$DATE"
@@ -793,20 +777,12 @@ gen_zip4() {
 
 # Ship China firmware builds
 setoldcam() {
-    export CAMLIBS=OldCam
-    # Pick DSP change
+    # Switch to old cam from defconfig
     sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/g' arch/arm64/configs/$DEFCONFIG2
     msg "|| Oldcam for MI 6X/A2 ready ||"
 }
 
-# Ship China firmware builds
-clearout2() {
-    # Pick DSP change
-    rm -rf out
-    mkdir -p out
-}
-
-# Setver 3 for newcam
+# Set naming to old cam for zip file
 setversioning5() {
 if [[ "$CI_BRANCH" == "sdm660-eas-test" ]]; then
 	KERNELNAME5="$KERNEL-$DEVICE2-$KERNELTYPE-$TYPE-oldcam-$DATE"
