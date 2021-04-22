@@ -78,7 +78,7 @@ fi
 	if [ $COMPILER = "clang" ]
 	then
 		# install few necessary packages
-		apt-get -y install llvm lld
+		apt-get update -y && apt-get -y install llvm lld
 	else
 		apt-get -y install libfl-dev
 	fi
