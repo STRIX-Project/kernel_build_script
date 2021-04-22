@@ -297,6 +297,8 @@ build_kernel() {
 				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
 				CC=clang \
 				AR=llvm-ar \
+				NM=llvm-nm \
+				LD=ld.lld \
 				OBJDUMP=llvm-objdump \
 				STRIP=llvm-strip
 	fi
