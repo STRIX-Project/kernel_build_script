@@ -156,8 +156,13 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	echo " "
 	if [ $COMPILER = "clang" ]
 	then
-		msg "|| Cloning STRIX clang ||"
-		git clone --depth=1 https://github.com/STRIX-Project/STRIX-clang.git clang
+		if [[ "$CI_BRANCH" == "lto-gcc-clang" ]]; then
+			msg "|| Cloning Proton clang ||"
+			git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang
+		else
+			msg "|| Cloning STRIX clang ||"
+			git clone --depth=1 https://github.com/STRIX-Project/STRIX-clang.git clang
+		fi
 
 		# Toolchain Directory defaults to clang-llvm
 		TC_DIR=$KERNEL_DIR/clang
