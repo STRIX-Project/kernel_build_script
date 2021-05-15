@@ -71,6 +71,8 @@ MANUFACTURERINFO="XiaoMI, Inc."
 # 'clang' or 'gcc'
 if [[ "$CI_BRANCH" == "sdm660-hmp-rebase" ]]; then
 	COMPILER=gcc
+elif [[ "$CI_BRANCH" == "lto-gcc-clang" ]]; then
+	COMPILER=clang
 else
 	COMPILER=gcc
 fi
