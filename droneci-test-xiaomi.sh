@@ -184,7 +184,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	fi
 
 	msg "|| Cloning Anykernel ||"
-	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b tulip
+	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b tulip-test
 
 	if [ $BUILD_DTBO = 1 ]
 	then
@@ -459,7 +459,7 @@ mkdir "$KERNEL_DIR/out"
 cloneak1() {
 	rm -rf "$KERNEL_DIR/AnyKernel3"
 	msg "|| Cloning Anykernel for whyred ||"
-	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b whyred
+	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b whyred-test
 }
 
 ##------------------------------------------------------------------##
@@ -666,7 +666,7 @@ mkdir "$KERNEL_DIR/out"
 cloneak2() {
 	rm -rf "$KERNEL_DIR/AnyKernel3"
 	msg "|| Cloning Anykernel for wayne/jasmine ||"
-	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b wayne/jasmine
+	git clone --depth 1 https://github.com/STRIX-Project/AnyKernel3.git -b wayne/jasmine-test
 }
 
 ##------------------------------------------------------------------##
